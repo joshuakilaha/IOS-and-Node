@@ -27,8 +27,12 @@ class TableViewCell: UITableViewCell {
         // Configure the view for the selected state
     }
     
-    func generateCell() {
-        print("posts")
+    func generateCell(_ post: Post) {
+        itemNameLable.text = post.itemName
+        itemDescriptionLable.text = post.itemDescription
+        itemPriceLable.text = post.itemPrice
+        
+        //print("posts")
     }
 
 }

@@ -42,11 +42,23 @@ class TableViewController: UITableViewController {
     //fetchPosts
     
     fileprivate func fetchPosts() {
-        Service.shared.fetchPosts {
-            print()
+        Service.shared.fetchPosts { (res) in
+            switch res {
+            case.failure(let err):
+                print("Failed to fetch Posts", err)
+
+            case .success(let posts):
+               // print(posts)
+                
+                self.posts = posts
+                self.tableView.reloadData()
+
+            }
         }
     }
     
+    
+
     
 
     // MARK: - Table view data source
@@ -59,8 +71,10 @@ class TableViewController: UITableViewController {
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
-
+        let cell = tableView.dequeueReusableCell(withIdentifier: "tableCell", for: indexPath) as! TableViewCell
+        
+        cell.generateCell(posts[indexPath.row])
+    
         // Configure the cell...
 
         return cell
