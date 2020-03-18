@@ -14,6 +14,7 @@ class Service: NSObject {
 
     static let shared = Service()
 
+    //MARK: GET Fetching JSON DATA
     func fetchPosts(completion: @escaping (Result<[Post], Error>) -> ()) {
         guard let url = URL(string: "http://localhost:1337/posts")
             else {
@@ -44,6 +45,45 @@ class Service: NSObject {
 
 
     }
+    
+    //MARK: CREATING ITEM
+    
+    func addItem(itemName: String, itemDescription: String, itemPrice: String, completion: @escaping (Error?) -> ()) {
+        
+        guard let url = URL(string: "http://localhost:1337/post")
+            else {
+                return
+        }
+        
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = "POST"
+        
+        let params = ["itemName": itemName, "itemDescription": itemDescription, "itemPrice": itemPrice]
+                      
+        do {
+            let data = try JSONSerialization.data(withJSONObject: params, options: .init())
+            
+            urlRequest.httpBody = data
+            urlRequest.setValue("application/json", forHTTPHeaderField: "content-type")
+            
+            URLSession.shared.dataTask(with: urlRequest) { (data, res, err) in
+                
+                guard let data = data
+                
+                    else {
+                        return
+                }
+                
+                completion(nil)
+               // print(String(data: data, encoding: .utf8))
+                
+            }.resume()
+        } catch {
+            completion(error)
+        }
+    }
+    
+   
 
 }
 
