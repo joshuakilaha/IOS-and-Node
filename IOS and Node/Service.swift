@@ -83,8 +83,38 @@ class Service: NSObject {
         }
     }
     
-   
-
+    
+    //MARK: DELETE Item
+    
+    func deleteItem(id: Int, completion: @escaping(Error?) ->()) {
+        guard let url = URL(string: "http://localhost:1337/post/\(id)")
+                  else {
+                      return
+              }
+              
+              var urlRequest = URLRequest(url: url)
+              urlRequest.httpMethod = "DELETE"
+        
+              URLSession.shared.dataTask(with: urlRequest) { (data, res, err) in
+                
+                DispatchQueue.main.async {
+                     if let err = err {
+                        completion(err)
+                        return
+                     }
+                
+                //Handling 404 error
+                if let res = res as? HTTPURLResponse, res.statusCode != 200 {
+                    let errorString = String(data: data ?? Data(), encoding: .utf8) ?? ""
+                    completion(NSError(domain: "", code: res.statusCode, userInfo: [NSLocalizedDescriptionKey: errorString]))
+                    return
+                }
+                    
+              completion(nil)
+             }
+        }.resume()
+    }
+    
 }
 
 
